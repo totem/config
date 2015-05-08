@@ -2,7 +2,6 @@ from __future__ import absolute_import
 from flask import Flask
 from flask.ext.cors import CORS
 from conf.appconfig import CORS_SETTINGS
-import configservice
 from configservice.views import root, hypermedia
 
 app = Flask(__name__)
@@ -15,4 +14,3 @@ if CORS_SETTINGS['enabled']:
 
 for module in [root]:
     module.register(app)
-
