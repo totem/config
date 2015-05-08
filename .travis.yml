@@ -1,0 +1,22 @@
+language: python
+python:
+  - "3.4"
+
+sudo: false
+
+# command to install dependencies
+install:
+  - "pip install -r requirements.txt"
+  - "pip install -r dev-requirements.txt"
+
+# commands to run tests and style check
+script:
+  - flake8 .
+  - nosetests --with-coverage --cover-erase --cover-branches --cover-package=configservice
+
+after_success:
+  - coveralls
+
+notifications:
+  webhooks:
+    - https://orchestrator.elb.us-west-1.cu.melt.sh/external/hooks/travis
