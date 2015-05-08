@@ -43,6 +43,60 @@ ENCRYPTION = {
     'passphrase': os.getenv('ENCRYPTION_PASSPHRASE', None),
 }
 
+CONFIG_PROVIDER_DEFAULT = os.getenv('CONFIG_PROVIDER_DEFAULT', 'etcd')
+
+CONFIG_PROVIDERS = {
+    's3': {
+        'bucket':  os.getenv('CONFIG_S3_BUCKET', 'not_set'),
+        'base': os.getenv('CONFIG_S3_BUCKET_BASE', 'totem/config'),
+        'meta-info': {
+            'readonly': False,
+            'name': 's3'
+        }
+    },
+    'etcd': {
+        'base': os.getenv('ETCD_TOTEM_BASE', '/totem'),
+        'host': os.getenv('ETCD_HOST', '172.17.42.1'),
+        'port': int(os.getenv('ETCD_PORT', '4001')),
+        'meta-info': {
+            'readonly': False,
+            'name': 'etcd',
+            'type': 'etcd'
+        }
+    },
+    'effective': {
+        'cache': {
+            'enabled': os.getenv('CONFIG_CACHE_ENABLED', 'true').strip()
+            .lower() in BOOLEAN_TRUE_VALUES,
+            'ttl': int(os.getenv('CONFIG_CACHE_TTL', '120'))
+        },
+        'meta-info': {
+            'readonly': True,
+            'name': 'effective',
+            'type': 'effective'
+        }
+    },
+    'github': {
+        'token': os.getenv('GITHUB_TOKEN', None),
+        'config_base': os.getenv('GITHUB_CONFIG_BASE', '/'),
+        'meta-info': {
+            'readonly': False,
+            'name': 'github',
+            'type': 'github'
+        }
+    },
+    'default': {
+        'ref': CONFIG_PROVIDER_DEFAULT,
+        'meta-info': {
+            'name': 'default',
+            'type': CONFIG_PROVIDER_DEFAULT,
+        }
+    }
+}
+
+CONFIG_PROVIDER_LIST = os.getenv(
+    'CONFIG_PROVIDER_LIST', 'default,etcd').split(',')
+
 MIME_JSON = 'application/json'
 MIME_HTML = 'text/html'
 MIME_ROOT_V1 = 'application/vnd.configservice.root.v1+json'

@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 export ETCD_HOST="${ETCD_HOST:-172.17.42.1}"
 export ETCD_PORT="${ETCD_PORT:-4001}"
@@ -11,8 +11,9 @@ export ENCRYPTION_PASSPHRASE="${ENCRYPTION_PASSPHRASE:-changeit}"
 export ENCRYPTION_S3_BUCKET="${ENCRYPTION_S3_BUCKET:-not-set}"
 export ENCRYPTION_STORE="${ENCRYPTION_PROVIDER:-s3}"
 export LOG_IDENTIFIER="${LOG_IDENTIFIER:-configservice}"
+export CONFIG_PROVIDER_LIST="${CONFIG_PROVIDER_LIST:-etcd,default,effective}"
+export CONFIG_PROVIDER_DEFAULT="${CONFIG_PROVIDER_LIST:-etcd}"
 
-python --version
 
 /usr/local/bin/uwsgi \
         --master \
