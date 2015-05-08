@@ -21,4 +21,5 @@ export LOG_IDENTIFIER='${LOG_IDENTIFIER:-configservice}'
         --http-timeout 120 \
         --gevent-monkey-patch \
         --module configservice.server \
-        --callable app
+        --callable app \
+        --logger syslog:${LOG_IDENTIFIER}[0]
