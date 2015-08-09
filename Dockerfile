@@ -1,4 +1,4 @@
-FROM totem/python-base:2.7-trusty-b2
+FROM totem/python-base:2.7-trusty-b3
 
 ADD requirements.txt /opt/
 RUN pip install -r /opt/requirements.txt
