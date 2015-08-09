@@ -2,7 +2,7 @@
 
 HOST_IP="${HOST_IP:-$(/sbin/ip route|awk '/default/ { print $3 }')}"
 
-export ETCD_HOST="${ETCD_HOST:-${HOST_IP}"
+export ETCD_HOST="${ETCD_HOST:-$HOST_IP}"
 export ETCD_PORT="${ETCD_PORT:-4001}"
 export ETCD_TOTEM_BASE="${ETCD_TOTEM_BASE:-/totem}"
 export API_EXECUTORS="${API_EXECUTORS:-2}"
