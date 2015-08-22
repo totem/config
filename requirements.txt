@@ -2,11 +2,11 @@ Flask==0.10.1
 Flask-Cors==1.9.0
 gevent==1.0.1
 uWSGI==2.0.7
-future==0.14.1
+future==0.15.0
 PyYAML==3.11
 python-etcd==0.3.2
 requests[security]==2.7.0
 urllib3==1.11
-https://github.com/totem/flask-hyperschema/archive/master.tar.gz
+https://github.com/totem/flask-hyperschema/archive/v0.1.1.tar.gz
 https://github.com/totem/totem-encrypt/archive/master.tar.gz
 https://github.com/dlitz/pycrypto/archive/v2.7a1.tar.gz

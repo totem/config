@@ -9,19 +9,13 @@ LOG_IDENTIFIER = os.getenv('LOG_IDENTIFIER', 'config-service')
 BOOLEAN_TRUE_VALUES = {"true", "yes", "y", "1", "on"}
 API_PORT = int(os.getenv('API_PORT', '9003'))
 
-LEVEL_FAILED = 1
-LEVEL_FAILED_WARN = 2
-LEVEL_SUCCESS = 3
-LEVEL_STARTED = 4
-LEVEL_PENDING = 5
-
 DEFAULT_HIPCHAT_TOKEN = os.getenv('HIPCHAT_TOKEN', '')
 DEFAULT_GITHUB_TOKEN = os.getenv('GITHUB_TOKEN', '')
 BASE_URL = os.getenv('BASE_URL', 'http://localhost:{0}'.format(API_PORT))
 
 TOTEM_ETCD_SETTINGS = {
     'base': os.getenv('ETCD_TOTEM_BASE', '/totem'),
-    'host': os.getenv('ETCD_HOST', '172.17.42.1'),
+    'host': os.getenv('ETCD_HOST', 'localhost'),
     'port': int(os.getenv('ETCD_PORT', '4001')),
     'yoda_base': os.getenv('ETCD_YODA_BASE', '/yoda'),
 }
@@ -55,9 +49,9 @@ CONFIG_PROVIDERS = {
         }
     },
     'etcd': {
-        'base': os.getenv('ETCD_TOTEM_BASE', '/totem'),
-        'host': os.getenv('ETCD_HOST', '172.17.42.1'),
-        'port': int(os.getenv('ETCD_PORT', '4001')),
+        'base': TOTEM_ETCD_SETTINGS['base'],
+        'host': TOTEM_ETCD_SETTINGS['host'],
+        'port': TOTEM_ETCD_SETTINGS['port'],
         'meta-info': {
             'readonly': False,
             'name': 'etcd',
@@ -110,7 +104,3 @@ API_DEFAULT_PAGE_SIZE = 10
 
 HEALTH_OK = 'ok'
 HEALTH_FAILED = 'failed'
-
-# Elasticsearch doc types
-DOC_TYPE_DEPLOYMENTS = 'deployments'
-DOC_TYPE_EVENTS = 'events'
