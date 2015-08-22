@@ -27,6 +27,9 @@ class ConfigApi(MethodView):
         if provider not in get_provider_types():
             flask.abort(404)
         else:
+            if groups == '_':
+                groups = ''
+
             return build_response(config.load_config(
                 *(group for group in groups.split(',') if group),
                 config_names=[

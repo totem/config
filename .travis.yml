@@ -12,7 +12,7 @@ install:
 # commands to run tests and style check
 script:
   - flake8 .
-  - nosetests --with-coverage --cover-erase --cover-branches --cover-package=configservice
+  - nosetests -A 'not s3 and not github' --with-coverage --cover-erase --cover-branches --cover-package=configservice
 
 after_success:
   - coveralls
