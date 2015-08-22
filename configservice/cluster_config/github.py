@@ -53,7 +53,7 @@ class GithubConfigProvider(AbstractConfigProvider):
                   '{path}'.format(**path_params)
         resp = requests.get(hub_url, params=query_params, auth=self.auth)
         if resp.status_code == 200:
-            return base64.decodestring(resp.json()[u'content'])
+            return base64.decodebytes(resp.json()[u'content'].encode('utf-8'))
         elif resp.status_code == 404:
             return None
         else:
