@@ -542,13 +542,14 @@ def test_load_config(m_validate_schema, m_get_provider):
     # When: I load the config
     loaded_config = config.load_config({
         'groups': ['mockpath1', 'mockpath2'],
-        'evaluate': True
-    }, defaults={
-        'deployers': {
-            '.defaults': {
-                'proxy': {}
+        'evaluate': True,
+        'default-config': {
+            'deployers': {
+                '.defaults': {
+                    'proxy': {}
+                }
             }
-        }
+        },
     })
 
     # Then: Config gets loaded as expected

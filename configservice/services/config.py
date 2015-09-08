@@ -218,7 +218,7 @@ def _expand_parent_groups(groups, parent_groups):
     return _expand_groups(parent_groups)
 
 
-def load_config(meta, defaults=None, processed_paths=None):
+def load_config(meta, processed_paths=None):
     """
     Loads config for given path and provider type.
     :param meta: Meta information for config loading
@@ -232,6 +232,7 @@ def load_config(meta, defaults=None, processed_paths=None):
     processed_paths = processed_paths or []
     provider_type = meta.get('provider-type', 'effective')
     config_name = meta.get('name', 'totem')
+    default_config = meta.get('default-config')
     processed_paths = copy.deepcopy(processed_paths)
     groups = list(meta.get('groups') or [])
     process_path = '{}:'.format(provider_type).join(groups)
@@ -259,7 +260,7 @@ def load_config(meta, defaults=None, processed_paths=None):
             load_config(merged_config['.parent'],
                         processed_paths=processed_paths)
         ) if merged_config['.parent']['enabled'] else merged_config
-        merged_config = dict_merge(merged_config, defaults)
+        merged_config = dict_merge(merged_config, default_config)
         del(merged_config['.parent'])
 
         if not meta.get('evaluate'):

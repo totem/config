@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+  "type": "object",
+  "title": "HyperSchema for provider API",
+  "id": "#provider-v1",
+  "type": "object",
+  "properties": {
+    "type": {
+      "enum": [ "s3", "github", "effective", "scm-default"],
+      "title": "Provider Type"
+    },
+    "readonly": {
+      "type": "boolean",
+      "description": "Is this provider readonly (does not support write operations) ?"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name for config provider"
+    }
+  },
+  "links": [
+    {
+      "rel": "self",
+      "href": "${base_url}",
+      "mediaType": "vnd.totem-config-service.provider-v1+json",
+      "method": "GET",
+      "title":  "Provider Info"
+    },
+    {
+      "rel": "config",
+      "href": "groups/{groups}/{config_type}/{name}",
+      "mediaType": "application/json",
+      "method": "GET",
+      "description":  "Gets config for given groups, config_type and name using json format"
+    },
+    {
+      "rel": "config",
+      "href": "groups/{groups}/{config_type}/{name}",
+      "mediaType": "application/yml",
+      "method": "GET",
+      "description":  "Gets config for given groups, config_type and name using yml format"
+    },
+    {
+      "rel": "config-generate",
+      "description":  "Generates evaluated config (json) using meta information.",
+      "href": "groups/{groups}/{config_type}/{name}",
+      "mediaType": "application/json",
+      "encType": "application/totem-config-service.config-meta-v1+json",
+      "method": "POST",
+      "schema": {
+        "$ref": "config-meta-v1"
+      }
+    },
+    {
+      "rel": "config-generate",
+      "description":  "Generates evaluated config (yml) using meta information.",
+      "href": "groups/{groups}/{config_type}/{name}",
+      "mediaType": "application/yml",
+      "encType": "application/totem-config-service.config-meta-v1+json",
+      "method": "POST",
+      "schema": {
+        "$ref": "config-meta-v1"
+      }
+    }
+  ]
+}

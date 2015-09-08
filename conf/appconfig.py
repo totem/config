@@ -87,11 +87,16 @@ CONFIG_PROVIDER_LIST = os.getenv(
 MIME_JSON = 'application/json'
 MIME_YAML = 'application/yaml'
 MIME_HTML = 'text/html'
-MIME_ROOT_V1 = 'application/vnd.configservice.root.v1+json'
-MIME_HEALTH_V1 = 'application/vnd.configservice.health.v1+json'
+MIME_ROOT_V1 = 'application/vnd.totem-config-service.root.v1+json'
+MIME_HEALTH_V1 = 'application/vnd.totem.health-v1+json'
+MIME_PROVIDERS_V1 = 'application/vnd.totem-config-service.providers.v1+json'
+MIME_PROVIDER_V1 = 'application/vnd.totem-config-service.provider.v1+json'
 
 SCHEMA_ROOT_V1 = 'root-v1'
 SCHEMA_HEALTH_V1 = 'health-v1'
+SCHEMA_PROVIDERS_V1 = 'providers-v1'
+SCHEMA_PROVIDER_V1 = 'provider-v1'
+SCHEMA_CONFIG_META_V1 = 'config-meta-v1'
 
 API_MAX_PAGE_SIZE = 1000
 API_DEFAULT_PAGE_SIZE = 10
