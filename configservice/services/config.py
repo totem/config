@@ -114,7 +114,7 @@ def _get_github_provider():
 
 
 @repoze.lru.lru_cache(50, timeout=5*60)
-def _load_job_schema(schema_name, groups=None, provider_type=None):
+def _load_job_schema(schema_name, groups, provider_type):
     """
     Helper function that loads given schema
 
@@ -168,11 +168,11 @@ def validate_schema(config, schema_config=None):
     :return: config if validation passes
     :rtype: dict
     """
-    if not schema_config or 'schema' not in schema_config:
+    if not schema_config or not schema_config.get('schema'):
         return config
     schema_name = schema_config.get('schema')
-    schema = _load_job_schema(schema_name, groups=schema_config.get('groups'),
-                              provider_type=schema_config.get('provider-type'))
+    schema = _load_job_schema(schema_name, schema_config.get('groups'),
+                              schema_config.get('provider-type'))
     try:
         validate(config, schema)
     except ValidationError as ex:
