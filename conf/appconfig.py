@@ -78,13 +78,6 @@ CONFIG_PROVIDERS = {
             'name': 'github',
             'type': 'github'
         }
-    },
-    'default': {
-        'ref': CONFIG_PROVIDER_DEFAULT,
-        'meta-info': {
-            'name': 'default',
-            'type': CONFIG_PROVIDER_DEFAULT,
-        }
     }
 }
 
@@ -92,6 +85,7 @@ CONFIG_PROVIDER_LIST = os.getenv(
     'CONFIG_PROVIDER_LIST', 'default,etcd').split(',')
 
 MIME_JSON = 'application/json'
+MIME_YAML = 'application/yaml'
 MIME_HTML = 'text/html'
 MIME_ROOT_V1 = 'application/vnd.configservice.root.v1+json'
 MIME_HEALTH_V1 = 'application/vnd.configservice.health.v1+json'

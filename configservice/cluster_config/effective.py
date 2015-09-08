@@ -88,15 +88,7 @@ class MergedConfigProvider(AbstractConfigProvider):
                 return dict_merge(
                     current_config,
                     provider.load(name, *merge_paths))
-
-            use_paths = list(paths)
-            while True:
-                for provider in self.providers:
-                    merged_config = merge(merged_config, provider, *use_paths)
-                if use_paths:
-                    use_paths.pop()
-                else:
-                    break
-
+            for provider in self.providers:
+                merged_config = merge(merged_config, provider, *paths)
             return merged_config
         return cached(name, *paths)

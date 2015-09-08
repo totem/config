@@ -1,6 +1,6 @@
 import flask
 from flask.views import MethodView
-from conf.appconfig import SCHEMA_ROOT_V1, MIME_JSON
+from conf.appconfig import SCHEMA_ROOT_V1, MIME_JSON, MIME_YAML
 
 from configservice.services import config
 from configservice.services.config import get_provider_types
@@ -14,9 +14,11 @@ class ConfigApi(MethodView):
     """
 
     @hypermedia.produces({
-        MIME_JSON: SCHEMA_ROOT_V1
+        MIME_JSON: SCHEMA_ROOT_V1,
+        MIME_YAML: SCHEMA_ROOT_V1
     }, default=MIME_JSON)
-    def get(self, provider, groups, configs, **kwargs):
+    def get(self, provider, groups, config_type, name, accept_mimetype=None,
+            **kwargs):
         """
         Lists all providers.
 
@@ -31,12 +33,13 @@ class ConfigApi(MethodView):
                 groups = ''
 
             return build_response(config.load_config(
-                *(group for group in groups.split(',') if group),
-                config_names=[
-                    config_name for config_name in configs.split(',')
-                    if config_name],
-                provider_type=provider
-            ))
+                meta={
+                    'groups': [group for group in groups.split(',') if group],
+                    'name': name,
+                    'provider-type': provider,
+                    'evaluate':  config_type.lower() == 'evaluated'
+                }
+            ), mimetype=accept_mimetype)
 
 
 def register(app, **kwargs):
@@ -47,6 +50,6 @@ def register(app, **kwargs):
     :param app: Flask application
     :return: None
     """
-    config_func = ConfigApi.as_view('configs')
-    for uri in ['/providers/<provider>/groups/<groups>/configs/<configs>']:
+    config_func = ConfigApi.as_view('config')
+    for uri in ['/providers/<provider>/groups/<groups>/<config_type>/<name>']:
         app.add_url_rule(uri,  view_func=config_func, methods=['GET'])
