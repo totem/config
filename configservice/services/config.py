@@ -172,7 +172,7 @@ def validate_schema(config, schema_config=None):
         return config
     schema_name = schema_config.get('schema')
     schema = _load_job_schema(schema_name, groups=schema_config.get('groups'),
-                              provider_type=schema_config.get('provider'))
+                              provider_type=schema_config.get('provider-type'))
     try:
         validate(config, schema)
     except ValidationError as ex:
@@ -228,10 +228,24 @@ def load_config(meta, processed_paths=None):
     :return: Parsed configuration
     :rtype: dict
     """
-    meta = meta or {}
+    meta = dict_merge(meta, {
+        'provider-type': 'effective',
+        'name': 'totem',
+        'default-config': None,
+        'groups': []
+    })
+
+    # Add Default Schema configuation
+    meta = dict_merge(meta, {
+        'schema-config': {
+            'schema': None,
+            'groups': list(meta.get('groups') or []),
+            'provider-type': meta.get('provider-type')
+        }
+    })
     processed_paths = processed_paths or []
-    provider_type = meta.get('provider-type', 'effective')
-    config_name = meta.get('name', 'totem')
+    provider_type = meta.get('provider-type')
+    config_name = meta.get('name')
     default_config = meta.get('default-config')
     processed_paths = copy.deepcopy(processed_paths)
     groups = list(meta.get('groups') or [])
