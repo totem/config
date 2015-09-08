@@ -536,7 +536,7 @@ def test_load_config(m_validate_schema, m_get_provider):
             'env1': 'val1'
         }
     }
-    m_get_provider.return_value.load.side_effect = [cfg1, cfg2]
+    m_get_provider.return_value.load.side_effect = [cfg1, cfg2, {}]
     m_validate_schema.side_effect = lambda vcfg, schema_config=None: vcfg
 
     # When: I load the config
