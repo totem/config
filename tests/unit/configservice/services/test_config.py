@@ -7,7 +7,6 @@ from future.builtins import (  # noqa
     ascii, chr, hex, input, next, oct, open,
     pow, round, super,
     filter, map, zip)
-from jsonschema import ValidationError
 from mock import patch
 from nose.tools import eq_, raises
 from configservice.cluster_config.effective import MergedConfigProvider
