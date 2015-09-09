@@ -9,10 +9,6 @@
       "type": "object",
       "description": "Default config that needs to be merged with generated config"
     },
-    "schema-config": {
-      "type": "object",
-      "description": "Schema configuration"
-    },
     "default-variables": {
       "type": "object",
       "description": "Default variables for evaluation"

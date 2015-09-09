@@ -4,7 +4,6 @@ from parser import ParserError
 import types
 from jinja2 import TemplateSyntaxError
 from jinja2.environment import get_spontaneous_environment
-from jsonschema import validate, ValidationError
 from yaml.error import MarkedYAMLError
 from future.builtins import (  # noqa
     bytes, dict, int, list, object, range, str,
@@ -12,7 +11,6 @@ from future.builtins import (  # noqa
     pow, round, filter, map, zip)
 
 from jsonschema.exceptions import SchemaError
-import repoze.lru
 from conf.appconfig import CONFIG_PROVIDERS, CONFIG_PROVIDER_LIST, \
     BOOLEAN_TRUE_VALUES
 from configservice.cluster_config.effective import MergedConfigProvider
@@ -21,7 +19,7 @@ from configservice.cluster_config.github import GithubConfigProvider
 from configservice.cluster_config.s3 import S3ConfigProvider
 from configservice.jinja import conditions
 from configservice.services.exceptions import ConfigProviderNotFound, \
-    ConfigParseError, ConfigValueError, ConfigValidationError
+    ConfigParseError, ConfigValueError
 from configservice.util import dict_merge
 
 
@@ -113,22 +111,6 @@ def _get_github_provider():
     )
 
 
-@repoze.lru.lru_cache(50, timeout=5*60)
-def _load_job_schema(schema_name, groups, provider_type):
-    """
-    Helper function that loads given schema
-
-    :param schema_name:
-    :return:
-    """
-    groups = list(groups or [])
-    return load_config(meta={
-        'groups': groups,
-        'config-names': [schema_name],
-        'provider-type': provider_type
-    })
-
-
 def get_provider(provider_type):
     """
     Factory method to create config provider instance.
@@ -157,30 +139,6 @@ def _json_compatible_config(config):
     :return:
     """
     return json.loads(json.dumps(config))
-
-
-def validate_schema(config, schema_config=None):
-    """
-    Validates schema for given configuration.
-
-    :param config: Config dictionary
-    :type config: dict
-    :return: config if validation passes
-    :rtype: dict
-    """
-    if not schema_config or not schema_config.get('schema'):
-        return config
-    schema_name = schema_config.get('schema')
-    schema = _load_job_schema(schema_name, schema_config.get('groups'),
-                              schema_config.get('provider-type'))
-    try:
-        validate(config, schema)
-    except ValidationError as ex:
-        message = 'Failed to validate config against schema {0}. ' \
-                  'Reason: {1}'.format(schema_name, ex.message)
-        raise ConfigValidationError(message, '/'.join(ex.schema_path),
-                                    ex.schema)
-    return config
 
 
 def _expand_groups(groups):
@@ -280,12 +238,10 @@ def load_config(meta, processed_paths=None):
         if not meta.get('evaluate'):
             return _json_compatible_config(merged_config)
         return dict(normalize_config(
-            validate_schema(
-                evaluate_config(
-                    _json_compatible_config(merged_config),
-                    default_variables=meta.get('default-variables'),
-                    transformations=meta.get('transformations')),
-                schema_config=meta.get('schema-config')),
+            evaluate_config(
+                _json_compatible_config(merged_config),
+                default_variables=meta.get('default-variables'),
+                transformations=meta.get('transformations')),
             encrypted_keys=meta.get('encrypted-keys')
         ))
     except (MarkedYAMLError, ParserError, SchemaError) as error:

@@ -15,8 +15,8 @@ from configservice.cluster_config.etcd import EtcdConfigProvider
 from configservice.cluster_config.github import GithubConfigProvider
 from configservice.cluster_config.s3 import S3ConfigProvider
 from configservice.services import config
-from configservice.services.exceptions import ConfigValidationError, \
-    ConfigParseError, ConfigProviderNotFound
+from configservice.services.exceptions import ConfigParseError, \
+    ConfigProviderNotFound
 from tests.helper import dict_compare
 
 import configservice.services.config as service
@@ -355,69 +355,6 @@ def test_evaluate_config_with_defaults():
     })
 
 
-@patch('configservice.services.config.validate')
-@patch('configservice.services.config._load_job_schema')
-def test_validate_schema_for_successful_validation(m_load_job_schema,
-                                                   m_validate):
-
-    # Given: Existing schema
-    m_load_job_schema.return_value = {
-        'title': 'Schema for Job Config',
-        'id': '#generic-hook-v1',
-        'properties': {
-            'mock': {
-                '$ref': '${base_url}/link/config#/properties/mock'
-            }
-        }
-    }
-    # And: Validator that succeeds validation
-    m_validate.return_value = None
-
-    # And: Config that needs to be validated
-    config = {
-        'mock-obj': 'mock-value'
-    }
-
-    # When: I validate against existing schema
-    ret_value = service.validate_schema(config, schema_config={
-        'schema': 'mock-schema'
-    })
-
-    # Then: Validation succeeds
-    dict_compare(ret_value, config)
-    eq_(m_validate.called, True)
-    dict_compare(m_validate.call_args[0][0], config)
-
-
-@raises(ConfigValidationError)
-@patch('configservice.services.config.validate')
-@patch('configservice.services.config._load_job_schema')
-def test_validate_schema_for_failed_validation(m_load_job_schema, m_validate):
-
-        # Given: Existing schema
-        schema = {
-            'title': 'Schema for Job Config',
-            'id': '#generic-hook-v1'
-        }
-        m_load_job_schema.return_value = schema
-
-        # And: Validator that fails validation
-        m_validate.side_effect = ValidationError(
-            'MockError', schema=schema)
-
-        # And: Config that needs to be validated
-        config = {
-            'mock-obj': 'mock-value'
-        }
-
-        # When: I validate against existing schema
-        service.validate_schema(config, schema_config={
-            'schema': 'mock-schema'
-        })
-
-    # Then: ConfigValidationError is raised
-
-
 def test_transform_string_values():
     """
     Should transform string values inside config as expected.
@@ -482,8 +419,7 @@ def test_transform_string_values():
 
 
 @patch('configservice.services.config.get_provider')
-@patch('configservice.services.config.validate_schema')
-def test_load_config(m_validate_schema, m_get_provider):
+def test_load_config(m_get_provider):
     """
     Should load config successfully
     :return:
@@ -537,7 +473,6 @@ def test_load_config(m_validate_schema, m_get_provider):
         }
     }
     m_get_provider.return_value.load.side_effect = [cfg1, cfg2, {}]
-    m_validate_schema.side_effect = lambda vcfg, schema_config=None: vcfg
 
     # When: I load the config
     loaded_config = config.load_config({
@@ -579,15 +514,13 @@ def test_load_config(m_validate_schema, m_get_provider):
 
 @raises(ConfigParseError)
 @patch('configservice.services.config.get_provider')
-@patch('configservice.services.config.validate_schema')
-def test_load_config_when_config_is_invalid(m_validate_schema, m_get_provider):
+def test_load_config_when_config_is_invalid(m_get_provider):
     """
     Should raise ConfigParseError when configuration is invalid
     :return:
     """
     # Given: Existing valid config
     m_get_provider.return_value.load.side_effect = ParserError('Mock')
-    m_validate_schema.side_effect = lambda vcfg, schema_name=None: vcfg
 
     # When: I load the config
     config.load_config({
