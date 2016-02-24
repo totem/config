@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+  "type": "object",
+  "title": "HyperSchema for providers API",
+  "id": "#providers-v1",
+  "type": "array",
+  "items": {
+    "$ref": "provider-v1"
+  },
+  "links": [
+    {
+      "rel": "self",
+      "href": "${base_url}",
+      "mediaType": "vnd.totem-config-service.providers-v1+json",
+      "method": "GET",
+      "title":  "Providers List"
+    },
+    {
+      "rel": "provider",
+      "href": "/providers/{provider}",
+      "mediaType": "application/totem-config-service.provider-v1+json",
+      "method": "GET",
+      "title":  "Provider Info"
+    }
+  ]
+}

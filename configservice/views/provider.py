@@ -1,7 +1,7 @@
 import flask
 from flask.views import MethodView
-from conf.appconfig import SCHEMA_ROOT_V1, MIME_JSON, \
-    CONFIG_PROVIDERS
+from conf.appconfig import MIME_JSON, CONFIG_PROVIDERS, SCHEMA_PROVIDERS_V1, \
+    SCHEMA_PROVIDER_V1, MIME_PROVIDER_V1, MIME_PROVIDERS_V1
 from configservice.services.config import get_providers_meta_info, \
     get_provider_types
 from configservice.views import hypermedia
@@ -14,25 +14,35 @@ class ProviderApi(MethodView):
     Provider API
     """
 
-    @hypermedia.produces({
-        MIME_JSON: SCHEMA_ROOT_V1
-    }, default=MIME_JSON)
-    def get(self, name=None, **kwargs):
+    def get(self, name=None):
         """
-        Lists all providers.
-
+        Lists providers / fetches single provider information
         :param kwargs:
         :return:
         """
-        provider_types = get_provider_types()
         if name:
-            if name not in provider_types:
-                flask.abort(404)
-            else:
-                provider = CONFIG_PROVIDERS[name]['meta-info']
-                return build_response(provider)
+            return self.get_provider(name)
         else:
-            return build_response(get_providers_meta_info())
+            return self.list()
+
+    @hypermedia.produces({
+        MIME_JSON: SCHEMA_PROVIDER_V1,
+        MIME_PROVIDER_V1: SCHEMA_PROVIDER_V1
+    }, default=MIME_PROVIDER_V1)
+    def get_provider(self, name, **kwargs):
+        provider_types = get_provider_types()
+        if name not in provider_types:
+            flask.abort(404)
+        else:
+            provider = CONFIG_PROVIDERS[name]['meta-info']
+            return build_response(provider)
+
+    @hypermedia.produces({
+        MIME_JSON: SCHEMA_PROVIDERS_V1,
+        MIME_PROVIDERS_V1: SCHEMA_PROVIDERS_V1
+    }, default=MIME_PROVIDERS_V1)
+    def list(self, **kwargs):
+        return build_response(get_providers_meta_info())
 
 
 def register(app, **kwargs):

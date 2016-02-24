@@ -3,6 +3,7 @@ import functools
 import json
 
 from flask import jsonify, Response, request
+import yaml
 
 from conf.appconfig import MIME_JSON, API_DEFAULT_PAGE_SIZE
 
@@ -22,7 +23,9 @@ def build_response(output, status=200, mimetype=MIME_JSON,
     :type headers: dict
     :return: Tuple consisting of Flask Response, Status Code and Http Headers
     """
-    if isinstance(output, list):
+    if mimetype.lower().endswith('yaml'):
+        resp = Response(yaml.dump(output))
+    elif isinstance(output, list):
         resp = Response(json.dumps(output))
     else:
         resp = jsonify(output)
